@@ -11,6 +11,7 @@ auth_bp = Blueprint('auth', __name__)
 def register():
     if request.method == 'POST':
         username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
 
         # 檢查密碼與確認密碼是否一致
@@ -23,9 +24,15 @@ def register():
         if existing_user:
             flash('使用者名稱已存在，請選擇其他名稱。', 'error')
             return redirect(url_for('auth.register'))
+        
+        # 檢查信箱是否已存在
+        existing_email = User.query.filter_by(email=email).first()
+        if existing_email:
+            flash('該信箱已被使用，請選擇其他信箱。', 'error')
+            return redirect(url_for('auth.register'))
 
         # 創建新使用者
-        new_user = User(username=username, password=generate_password_hash(password, method='pbkdf2:sha256'))
+        new_user = User(username=username,email=email, password=generate_password_hash(password, method='pbkdf2:sha256'))
         db.session.add(new_user)
         db.session.commit()
 
