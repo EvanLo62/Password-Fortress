@@ -10,7 +10,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)  # 新增 email 欄位
-
+    salt = db.Column(db.String(32), nullable=False)  # 專屬鹽值
     """
     這裡要在定義密碼儲存的格式
     或額外的類別

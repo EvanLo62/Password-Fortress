@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, db
+import os
 
 # 建立藍圖
 auth_bp = Blueprint('auth', __name__)
@@ -30,9 +31,15 @@ def register():
         if existing_email:
             flash('該信箱已被使用，請選擇其他信箱。', 'error')
             return redirect(url_for('auth.register'))
-
+        
+        # 生成專屬鹽值
+        salt = os.urandom(16).hex()
+        print (username+" "+salt)
         # 創建新使用者
-        new_user = User(username=username,email=email, password=generate_password_hash(password, method='pbkdf2:sha256'))
+        new_user = User(username=username,
+                        email=email,
+                        password=generate_password_hash(password, method='pbkdf2:sha256')
+                        ,salt=salt)
         db.session.add(new_user)
         db.session.commit()
 
