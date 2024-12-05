@@ -27,10 +27,15 @@
             height: 40px;
             cursor: pointer;
         }
+        .header nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
         .header nav a {
             color: black;
-            margin-left: 20px;
             text-decoration: none;
+            font-weight: bold;
         }
         .header nav a:hover {
             text-decoration: underline;
@@ -43,6 +48,22 @@
         .container {
             padding: 20px;
         }
+        .features {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+        }
+        .feature {
+            width: 20%;
+            background-color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .feature:hover {
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
     </style>
     <script>
         function scrollToTop() {
@@ -53,7 +74,7 @@
         }
 
         function confirmLogout(event) {
-            if (!confirm("確定要登出嗎？")) {
+            if (!confirm("Are you sure you want to log out?")) {
                 event.preventDefault();
             }
         }
@@ -67,11 +88,15 @@
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onclick="scrollToTop()">
         </div>
         <nav>
+            <a href="/dashboard">User Dashboard</a>
+            <a href="/password-strength-checker">Password Strength Checker</a>
+            <a href="/password-generator">Password Generator</a>
+            <a href="/password-encryptor">Password Encryptor</a>
             <div class="user-info">
-                <span>歡迎, {{ current_user.username }}</span>  <!-- 顯示使用者名稱 -->
+                <span>Welcome, {{ current_user.username }}</span>
                 <form action="/logout" method="POST" onsubmit="confirmLogout(event)">
                     <button type="submit" style="background-color: #ff6347; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
-                        登出
+                        Log Out
                     </button>
                 </form>
             </div>
