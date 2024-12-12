@@ -47,9 +47,10 @@ with app.app_context():
 
 # 主頁路由
 # 在 app.py 內加入一個公開的首頁路由
+@login_required
 @app.route('/')
 def index():
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('dashboard.dashboard'))
 
 
 
