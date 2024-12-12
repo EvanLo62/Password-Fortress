@@ -11,48 +11,70 @@
             padding: 0;
             background-color: #f0f2f5;
         }
+
+        /* Header Section */
         .header {
             background-color: white;
             color: black;
-            padding: 15px 20px;
+            padding: 10px 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
-        .header .logo img {
+
+        .logo img {
             height: 40px;
             cursor: pointer;
+            margin-right: 20px;
         }
-        .header nav {
+
+        .nav {
             display: flex;
-            align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
-        .header nav a {
+
+        .nav a {
+            padding: 10px 15px;
             color: black;
             text-decoration: none;
             font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+            border: 1px solid transparent;
         }
-        .header nav a:hover {
-            text-decoration: underline;
+
+        .nav a:not(:last-child) {
+            border-right: 1px solid #ddd; /* 分界線 */
         }
+
+        .nav a:hover {
+            background-color: #f0f8ff;
+            color: #0073e6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border-color: #0073e6;
+        }
+
         .user-info {
+            margin-left: auto;
             display: flex;
             align-items: center;
             gap: 10px;
         }
+
         .container {
             padding: 20px;
         }
+
+        /* Features Section */
         .features {
             display: flex;
             justify-content: space-around;
             margin-top: 50px;
         }
+
         .feature {
             width: 20%;
             background-color: white;
@@ -60,8 +82,11 @@
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
+
         .feature:hover {
+            transform: translateY(-5px);
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
     </style>
@@ -87,20 +112,20 @@
         <div class="logo">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onclick="scrollToTop()">
         </div>
-        <nav>
+        <nav class="nav">
             <a href="/dashboard">User Dashboard</a>
             <a href="/password-strength-checker">Password Strength Checker</a>
             <a href="/password-generator">Password Generator</a>
             <a href="/password-encryptor">Password Encryptor</a>
-            <div class="user-info">
-                <span>Welcome, {{ current_user.username }}</span>
-                <form action="/logout" method="POST" onsubmit="confirmLogout(event)">
-                    <button type="submit" style="background-color: #ff6347; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
-                        Log Out
-                    </button>
-                </form>
-            </div>
         </nav>
+        <div class="user-info">
+            <span>Welcome, {{ current_user.username }}</span>
+            <form action="/logout" method="POST" onsubmit="confirmLogout(event)">
+                <button type="submit" style="background-color: #ff6347; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
+                    Log Out
+                </button>
+            </form>
+        </div>
     </div>
     {% endif %}
 
