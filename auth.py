@@ -58,7 +58,8 @@ def login():
 
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for('index'))
+            # 將導向改為 dashboard
+            return redirect(url_for('dashboard.dashboard'))
         else:
             flash('帳號不存在或密碼錯誤! 請再試一次', 'error')
             return redirect(url_for('auth.login'))

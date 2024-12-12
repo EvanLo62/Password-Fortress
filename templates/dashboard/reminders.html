@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Reminders{% endblock %}
+
+{% block content %}
+<h2>提醒</h2>
+{% if weak_passwords %}
+    <p>以下密碼強度較弱，建議更新：</p>
+    <ul>
+    {% for entry in weak_passwords %}
+        <li>{{ entry.site_name }} (強度：{{ entry.strength_score }})</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>目前沒有需更新的弱密碼。</p>
+{% endif %}
+{% endblock %}

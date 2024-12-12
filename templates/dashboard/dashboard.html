@@ -1,8 +1,17 @@
 {% extends "base.html" %}
-<!--目前這個頁面已經停止使用，首頁改為dashboard.html-->>
-{% block title %}Homepage{% endblock %}
+{% block title %}User Dashboard{% endblock %}
 
 {% block content %}
+<h2>使用者儀表板</h2>
+<p>您的密碼條目總數： {{ total_entries }}</p>
+<p>平均密碼強度： {{ avg_strength }}</p>
+
+<a href="{{ url_for('password_manager.view_passwords') }}">前往密碼管理</a><br>
+<a href="{{ url_for('password_strength_checker.checker') }}">密碼強度測試</a><br>
+<a href="{{ url_for('password_generator.generator') }}">密碼生成器</a><br>
+<a href="{{ url_for('password_encryptor.encryptor') }}">密碼加密器</a><br>
+<a href="{{ url_for('dashboard.reminders') }}">檢視提醒</a>
+
 <div class="features">
     <div class="feature">
         <h3>User Dashboard</h3>

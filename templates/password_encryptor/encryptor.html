@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}密碼加密器{% endblock %}
+
+{% block content %}
+<h2>密碼加密器</h2>
+<form method="POST">
+    <label>提示詞:</label><br>
+    <input type="text" name="hint" required><br><br>
+
+    <label>原始密碼:</label><br>
+    <input type="password" name="original_pw" required><br><br>
+
+    <button type="submit">生成加密密碼</button>
+</form>
+
+{% if encrypted_password %}
+    <p>您的加密後密碼：<strong>{{ encrypted_password }}</strong></p>
+    <p>請複製保存！</p>
+{% endif %}
+{% endblock %}

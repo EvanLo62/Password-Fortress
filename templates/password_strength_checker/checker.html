@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}密碼強度測試{% endblock %}
+
+{% block content %}
+<h2>密碼強度測試</h2>
+<form method="POST">
+    <input type="password" name="test_password" placeholder="輸入待測試的密碼" required>
+    <button type="submit">測試</button>
+</form>
+
+{% if score is not none %}
+    <p>密碼強度分數：{{ score }}</p>
+    <p>建議：{{ advice }}</p>
+{% endif %}
+{% endblock %}
