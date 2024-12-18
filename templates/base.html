@@ -100,7 +100,7 @@
         }
 
         function confirmLogout(event) {
-            if (!confirm("Are you sure you want to log out?")) {
+            if (!confirm("確認要登出?")) {
                 event.preventDefault();
             }
         }
@@ -114,16 +114,17 @@
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onclick="scrollToTop()">
         </div>
         <nav class="nav">
-            <a href="/dashboard">User Dashboard</a>
-            <a href="/password-strength-checker">Password Strength Checker</a>
-            <a href="/password-generator">Password Generator</a>
-            <a href="/password-encryptor">Password Encryptor</a>
+            <a href="/dashboard">儀表板</a>
+            <a href="/password-manager/view">我的密碼</a>
+            <a href="/password-strength-checker">密碼強度檢測</a>
+            <a href="/password-generator">密碼生成器</a>
+            <a href="/password-encryptor">密碼加密器</a>
         </nav>
         <div class="user-info">
-            <span>Welcome, {{ current_user.username }}</span>
+            <span>歡迎, {{ current_user.username }}</span>
             <form action="/logout" method="POST" onsubmit="confirmLogout(event)">
                 <button type="submit" style="background-color: #ff6347; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
-                    Log Out
+                    登出
                 </button>
             </form>
         </div>
