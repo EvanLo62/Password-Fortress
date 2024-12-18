@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, redirect, url_for
+from flask_mail import Mail
 from flask_login import LoginManager, login_required
 from dotenv import load_dotenv
 from auth import auth_bp  # 匯入藍圖
@@ -9,6 +10,7 @@ from utils.password_strength_checker import strength_checker_bp
 from utils.password_generator import generator_bp
 from utils.password_encryptor import encryptor_bp
 import os
+from datetime import timedelta
 
 app = Flask(__name__)
 
@@ -19,6 +21,19 @@ load_dotenv()
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback_secret_key')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=20)  # session 有效期 20 分鐘
+
+# 設定郵件參數
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+MAIL_USERNAME = os.getenv('MAIL_USERNAME')  # 發送的Gmail信箱
+app.config['MAIL_USERNAME'] = MAIL_USERNAME  
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Gmail應用專用密碼
+
+# 初始化 Flask-Mail
+mail = Mail(app)
 
 # 初始化擴展
 db.init_app(app)
@@ -34,7 +49,6 @@ def load_user(user_id):
 
 # 註冊藍圖
 app.register_blueprint(auth_bp)
-
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(password_manager_bp)
 app.register_blueprint(strength_checker_bp)
