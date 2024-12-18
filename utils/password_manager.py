@@ -7,6 +7,7 @@ from models import db, PasswordEntry
 from flask import session
 from flask_mail import Message
 from functools import wraps
+from utils import password_strength_checker
 
 password_manager_bp = Blueprint('password_manager', __name__, url_prefix='/password-manager')
 
@@ -177,19 +178,6 @@ def send_2fa_code():
         return {'status': 'failure', 'message': f'郵件發送失敗：{e}'}, 500
 
 
-    
-
 def calculate_strength(password):
-    # 簡單的密碼強度計算範例，可自行強化
-    score = 0
-    if len(password) >= 8:
-        score += 20
-    if any(c.isdigit() for c in password):
-        score += 20
-    if any(c.isupper() for c in password):
-        score += 20
-    if any(c.islower() for c in password):
-        score += 20
-    if any(c in "!@#$%^&*()_+" for c in password):
-        score += 20
+    score, entropy, issues, strength, advice = password_strength_checker.pwdRating(password)
     return score
