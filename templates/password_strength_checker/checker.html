@@ -1,15 +1,33 @@
 {% extends "base.html" %}
-{% block title %}密碼強度測試{% endblock %}
+{% block title %}密碼強度檢測器{% endblock %}
 
 {% block content %}
-<h2>密碼強度測試</h2>
+<h2>密碼強度檢測器</h2>
 <form method="POST">
-    <input type="password" name="test_password" placeholder="輸入待測試的密碼" required>
-    <button type="submit">測試</button>
+    <label for="test_password">請輸入您的密碼:</label><br>
+    <input type="password" id="test_password" name="test_password" required><br><br>
+    <button type="submit">檢測密碼強度</button>
+    <button type="submit" name="hint" value="1">顯示提示</button>
 </form>
 
+{% if hint_message %}
+    <p><strong>密碼提示:</strong> {{ hint_message }}</p>
+{% endif %}
+
 {% if score is not none %}
-    <p>密碼強度分數：{{ score }}</p>
-    <p>建議：{{ advice }}</p>
+    <p><strong>密碼評分:</strong> {{ score }} 分</p>
+    <p><strong>密碼強度等級:</strong> {{ strength }}</p>
+    <p><strong>建議:</strong> {{ advice }}</p>
+
+    {% if issues %}
+        <p><strong>檢測到的問題:</strong></p>
+        <ul>
+            {% for issue in issues %}
+                <li>{{ issue }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>恭喜！未檢測到密碼弱點。</p>
+    {% endif %}
 {% endif %}
 {% endblock %}
