@@ -4,7 +4,13 @@
 {% block content %}
 <style>
 body {
-    background: linear-gradient(to bottom right, #f0f2f5, #e6e9ed);
+    background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+    background-size: cover;         /* 使背景圖片覆蓋整個視窗 */
+    background-repeat: no-repeat;   /* 防止圖片重複 */
+    background-attachment: fixed;   /* 使背景圖片固定在視窗，不隨滾動而移動 */
+    background-position: center;    /* 背景圖片居中顯示 */
+    color: #e0e0e0;                  /* 設置文本顏色，避免和背景衝突 */
+    /* background: linear-gradient(to bottom right, #f0f2f5, #e6e9ed); */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -43,7 +49,7 @@ body {
 
 /* 指針 */
 .gauge-needle {
-    stroke: #333;
+    stroke: #e0e0e0;
     stroke-width: 3;
 }
 
@@ -56,13 +62,13 @@ body {
     margin-top: 10px;
     font-size: 1.5rem;
     font-weight: bold;
-    color: #333;
+    color: #e0e0e0;
     margin-bottom: 5px;
 }
 
 .password-count {
     font-size: 1rem;
-    color: #555;
+    color: #ccc;
     margin-bottom: 50px;
 }
 
@@ -76,7 +82,7 @@ body {
 }
 
 .feature {
-    background-color: #fff;
+    background-color: rgba(45, 45, 45, 0.8); /* 半透明背景 */
     width: 200px;
     padding: 20px;
     text-align: center;
@@ -100,13 +106,13 @@ body {
 .feature-title {
     font-size: 1.1rem;
     font-weight: bold;
-    color: #333;
+    color: #ffffff;
     margin-bottom: 8px;
 }
 
 .feature-desc {
     font-size: 0.9rem;
-    color: #666;
+    color: #b8b7b7;
     line-height: 1.4;
 }
 
@@ -114,9 +120,9 @@ body {
 .reminder-section {
     width: 80%;
     max-width: 600px;
-    margin: 0 auto;
-    background-color: #fff;
-    border: 1px solid #ddd;
+    margin: 20px auto;
+    background-color: rgba(45, 45, 45, 0.8); /* 半透明背景 */
+    border: 1px solid #2e2e2e;
     border-radius: 10px;
     padding: 20px;
     text-align: left;
@@ -126,17 +132,23 @@ body {
 
 .reminder-section h3 {
     margin-top: 0;
-    color: #333;
+    color: #fff;
     font-weight: bold;
     margin-bottom: 15px;
 }
 
 .reminder-item {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.reminder-section p {
+    color: #fff;
 }
 
 .reminder-item strong {
-    color: #007bff;
+    color: #e74c3c;
+    font-weight: bold;
 }
 
 /* RWD 調整 */
@@ -230,5 +242,22 @@ body {
         {% endfor %}
     </div>
     {% endif %}
+
+    <!-- {% if duplicate_passwords and duplicate_passwords|length > 0 %}
+    <div class="reminder-section">
+        <h3>密碼重複使用提醒：</h3>
+        <p>以下帳號使用了相同的密碼，建議為每個帳號設置獨立的密碼。</p>
+        {% for password, entries in duplicate_passwords.items() %}
+        <div class="reminder-item">
+            <strong>密碼：「{{ site_password }}」</strong><br>
+            {% for entry in entries %}
+                - {{ entry.site_name }}（用戶名：{{ entry.site_username }}）<br>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %} -->
+
+
 </div>
 {% endblock %}
