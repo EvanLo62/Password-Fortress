@@ -36,7 +36,7 @@
         /* 按鈕樣式 */
         .logout-btn {   
             background-color: #ff6347;
-            color: #ccc; 
+            color: #e0e0e0; 
             padding: 10px; 
             border: none; 
             border-radius: 5px; 
@@ -47,6 +47,7 @@
 
         .logout-btn:hover {
             background-color: #e5533d;
+            color: #ccc;
         }
 
         .logo img {
@@ -116,13 +117,6 @@
         }
     </style>
     <script>
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
         function confirmLogout(event) {
             if (!confirm("確認要登出?")) {
                 event.preventDefault();
