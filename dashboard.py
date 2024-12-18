@@ -20,22 +20,22 @@ def dashboard():
     weak_passwords = [e for e in entries if e.strength_score < 50]
 
     # 計算重複密碼
-    password_map = defaultdict(list)
-    for entry in entries:
-        password_map[entry.site_password].append(entry)
+    # password_map = defaultdict(list)
+    # for entry in entries:
+    #     password_map[entry.site_password].append(entry)
     
     # 篩選出重複使用的密碼（至少重複兩次）
-    duplicate_passwords = {password: entries for password, entries in password_map.items() if len(entries) > 1}
-    
+    # duplicate_passwords = {password: entries for password, entries in password_map.items() if len(entries) > 1}
+
      # 調試日誌
-    print(f"Duplicate Passwords: {duplicate_passwords}")
+    # print(f"Duplicate Passwords: {duplicate_passwords}")
 
 
     return render_template('dashboard/dashboard.html', 
                            total_entries=total_entries, 
                            avg_strength=round(avg_strength,2),
                            weak_passwords=weak_passwords,
-                           duplicate_passwords=duplicate_passwords
+                        #    duplicate_passwords=duplicate_passwords
                            )
 
 # @dashboard_bp.route('/')

@@ -4,20 +4,34 @@
 {% block content %}
 <h2>密碼加密器</h2>
 <form method="POST">
-    <label for="hint">提示詞:</label><br>
-    <input type="text" id="hint" name="hint" required><br><br>
+    <label>個人金鑰:</label><br>
+    <input type="text" name="hint" required><br><br>
 
-    <label for="original_pw">原始密碼:</label><br>
-    <input type="password" id="original_pw" name="original_pw" required><br><br>
+    <label>原始密碼:</label><br>
+    <input type="password" name="original_pw" required><br><br>
 
-    <label for="length">密碼長度:</label><br>
-    <input type="number" id="length" name="length" min="8" max="15" value="12"><br><br>
+    <label>密碼長度 (預設12):</label><br>
+    <input type="number" name="length" min="8" max="16" value="12"><br><br>
 
     <button type="submit">生成加密密碼</button>
 </form>
 
 {% if encrypted_password %}
-    <p>您的加密後密碼：<strong>{{ encrypted_password }}</strong></p>
-    <p>請複製保存！</p>
+<hr>
+<h3>生成的加密密碼:</h3>
+<p><strong>{{ encrypted_password }}</strong></p>
+<p><strong>密碼分數:</strong> {{ strength_score }} 分</p>
+<p><strong>密碼強度:</strong> {{ strength_level }}</p>
+
+
+<!-- 儲存密碼功能 -->
+<form method="POST" action="{{ url_for('password_encryptor.save_encrypted') }}">
+    <input type="hidden" name="encrypted_password" value="{{ encrypted_password }}">
+    <label>網站名稱:</label>
+    <input type="text" name="site_name" required><br><br>
+    <label>帳號名稱:</label>
+    <input type="text" name="site_username" required><br><br>
+    <button type="submit">儲存密碼</button>
+</form>
 {% endif %}
 {% endblock %}
