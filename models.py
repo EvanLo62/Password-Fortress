@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)  # email
+    email = db.Column(db.String(120), unique=True, nullable=False)  # 新增 email 欄位
     salt = db.Column(db.String(32), nullable=False)  # 專屬鹽值
 
 # 新增的密碼儲存 Model
