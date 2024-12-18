@@ -5,14 +5,9 @@
 <h2>密碼強度檢測器</h2>
 <form method="POST">
     <label for="test_password">請輸入您的密碼:</label><br>
-    <input type="password" id="test_password" name="test_password" required><br><br>
+    <input type="text" id="test_password" name="test_password" required><br><br>
     <button type="submit">檢測密碼強度</button>
-    <button type="submit" name="hint" value="1">顯示提示</button>
 </form>
-
-{% if hint_message %}
-    <p><strong>密碼提示:</strong> {{ hint_message }}</p>
-{% endif %}
 
 {% if score is not none %}
     <p><strong>密碼評分:</strong> {{ score }} 分</p>
