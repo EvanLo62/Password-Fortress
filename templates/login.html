@@ -13,13 +13,10 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
-          {% if category == 'error' %}
-            <p class="error-message" style="color: red; text-align: center;">{{ message }}</p>
-          {% endif %}
+          <p class="error-message" style="color: red; text-align: center;">{{ message }}</p>
         {% endfor %}
       {% endif %}
     {% endwith %}
-
 
     <form action="/login" method="POST" style="display: flex; flex-direction: column; align-items: flex-start;">
         <label for="username" style="margin-bottom: 5px; font-weight: bold; text-align: left;">使用者名稱</label>
