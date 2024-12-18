@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, session, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, db
@@ -58,6 +58,7 @@ def login():
 
         if user and check_password_hash(user.password, password):
             login_user(user)
+            session.pop('is_2fa_verified', None)  # 登入時清除二步驟驗證
             # 將導向改為 dashboard
             return redirect(url_for('dashboard.dashboard'))
         else:
@@ -70,5 +71,6 @@ def login():
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
+    session.clear()
     logout_user()
     return redirect(url_for('auth.login'))
