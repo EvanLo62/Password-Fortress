@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
 import hashlib
 from werkzeug.security import generate_password_hash
@@ -78,6 +78,13 @@ def save_encrypted():
     )
     db.session.add(new_entry)
     db.session.commit()
+
+    # 將成功訊息存入 session
+    session['saved_password'] = {
+        'password': encrypted_password,
+        'site_name': site_name,
+        'site_username': site_username
+    }
 
     flash('密碼已成功儲存！', 'success')
     return redirect(url_for('password_encryptor.encryptor'))

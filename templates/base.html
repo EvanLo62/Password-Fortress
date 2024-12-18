@@ -6,10 +6,16 @@
     <title>{% block title %}{% endblock %}</title>
     <style>
         body {
+            background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+            background-size: cover;         /* 使背景圖片覆蓋整個視窗 */
+            background-repeat: no-repeat;   /* 防止圖片重複 */
+            background-attachment: fixed;   /* 使背景圖片固定在視窗，不隨滾動而移動 */
+            background-position: center;    /* 背景圖片居中顯示 */
+            color: #e0e0e0;                  /* 設置文本顏色，避免和背景衝突 */
+            /* background: linear-gradient(to bottom right, #f0f2f5, #e6e9ed); */
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f2f5;
         }
 
         /* Header Section */
