@@ -16,7 +16,7 @@
 {% if generated_password %}
     <p>生成的密碼：<strong>{{ generated_password }}</strong></p>
     <hr>
-    <h3>將此密碼儲存至管理中心</h3>
+    <h3>儲存至我的密碼</h3>
     <form action="{{ url_for('password_generator.save_generated') }}" method="POST">
         <input type="hidden" name="generated_password" value="{{ generated_password }}">
         <label>網站名稱:</label><br>
