@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from models import db, PasswordEntry
-from werkzeug.security import generate_password_hash
+from flask import session
 
 password_manager_bp = Blueprint('password_manager', __name__, url_prefix='/password-manager')
 
@@ -30,7 +30,7 @@ def add_password():
 
         # 若不存在重複紀錄則繼續原本邏輯
         strength_score = calculate_strength(site_password)
-        hashed_pw = generate_password_hash(site_password, method='pbkdf2:sha256')
+        hashed_pw = PasswordEntry.set_encrypted_password(site_password)
 
         new_entry = PasswordEntry(
             user_id=current_user.id,
@@ -53,6 +53,8 @@ def add_password():
 @login_required
 def view_passwords():
     entries = PasswordEntry.query.filter_by(user_id=current_user.id).all()
+    for entry in entries:
+        entry.site_password = entry.get_plaintext_password()  # 解密密碼
     return render_template('password_manager/view_passwords.html', entries=entries)
 
 @password_manager_bp.route('/edit/<int:entry_id>', methods=['GET', 'POST'])
@@ -67,7 +69,7 @@ def edit_password(entry_id):
         entry.site_name = request.form['site_name']
         entry.site_username = request.form['site_username']
         new_password = request.form['site_password']
-        entry.site_password = generate_password_hash(new_password, method='pbkdf2:sha256')
+        entry.site_password = PasswordEntry.set_encrypted_password(new_password, method='pbkdf2:sha256')
         entry.strength_score = calculate_strength(new_password)
         db.session.commit()
         flash('密碼已成功更新！', 'success')
@@ -88,6 +90,20 @@ def delete_password(entry_id):
     flash('密碼已刪除。', 'success')
     return redirect(url_for('password_manager.view_passwords'))
 
+# @password_manager_bp.route('/2fa', methods=['GET', 'POST'])
+# @login_required
+# def two_factor_auth():
+#     if request.method == 'POST':
+#         # 簡單模擬雙因子驗證，實際應集成 OTP (如 Google Authenticator)
+#         otp_code = request.form.get('otp_code')
+#         if otp_code == '123456':  # 示例：預設驗證碼
+#             session['2fa_verified'] = True
+#             flash('雙因子驗證成功！', 'success')
+#             return redirect(url_for('password_manager.view_passwords'))
+#         else:
+#             flash('驗證失敗，請再試一次。', 'error')
+
+#     return render_template('password_manager/2fa.html')
 
 def calculate_strength(password):
     # 簡單的密碼強度計算範例，可自行強化

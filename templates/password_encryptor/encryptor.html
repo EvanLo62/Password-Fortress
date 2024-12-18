@@ -4,11 +4,14 @@
 {% block content %}
 <h2>密碼加密器</h2>
 <form method="POST">
-    <label>提示詞:</label><br>
-    <input type="text" name="hint" required><br><br>
+    <label for="hint">提示詞:</label><br>
+    <input type="text" id="hint" name="hint" required><br><br>
 
-    <label>原始密碼:</label><br>
-    <input type="password" name="original_pw" required><br><br>
+    <label for="original_pw">原始密碼:</label><br>
+    <input type="password" id="original_pw" name="original_pw" required><br><br>
+
+    <label for="length">密碼長度:</label><br>
+    <input type="number" id="length" name="length" min="8" max="15" value="12"><br><br>
 
     <button type="submit">生成加密密碼</button>
 </form>
