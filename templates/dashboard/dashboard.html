@@ -1,33 +1,234 @@
 {% extends "base.html" %}
-{% block title %}User Dashboard{% endblock %}
+{% block title %}儀表板{% endblock %}
 
 {% block content %}
-<h2>使用者儀表板</h2>
-<p>您的密碼條目總數： {{ total_entries }}</p>
-<p>平均密碼強度： {{ avg_strength }}</p>
+<style>
+body {
+    background: linear-gradient(to bottom right, #f0f2f5, #e6e9ed);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-<a href="{{ url_for('password_manager.view_passwords') }}">前往密碼管理</a><br>
-<a href="{{ url_for('password_strength_checker.checker') }}">密碼強度測試</a><br>
-<a href="{{ url_for('password_generator.generator') }}">密碼生成器</a><br>
-<a href="{{ url_for('password_encryptor.encryptor') }}">密碼加密器</a><br>
-<a href="{{ url_for('dashboard.reminders') }}">檢視提醒</a>
+/* 整體容器 */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 60px 20px; 
+}
 
-<div class="features">
-    <div class="feature">
-        <h3>User Dashboard</h3>
-        <p>Access your personal account and manage data securely.</p>
+/* 儀表板區域 */
+.gauge-container {
+    position: relative;
+    width: 250px;
+    height: 125px;
+    margin-bottom: 30px;
+    /* 讓整個儀表板區塊更突出 */
+}
+
+/* 半圓背景 */
+.gauge-bg {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 15;
+}
+
+/* 彩色弧線 */
+.gauge-arc {
+    fill: none;
+    stroke-width: 15;
+    stroke: url(#gradColor);
+    stroke-linecap: round;
+}
+
+/* 指針 */
+.gauge-needle {
+    stroke: #333;
+    stroke-width: 3;
+}
+
+.gauge-center-dot {
+    fill: #333;
+}
+
+/* 顯示數值 */
+.gauge-value {
+    margin-top: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.password-count {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 50px;
+}
+
+/* 卡片區域 */
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.feature {
+    background-color: #fff;
+    width: 200px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    transition: box-shadow 0.3s, transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.feature:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    transform: translateY(-3px);
+}
+
+.feature-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.feature-desc {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* 提醒區域 */
+.reminder-section {
+    width: 80%;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: left;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-top: 30px;
+}
+
+.reminder-section h3 {
+    margin-top: 0;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.reminder-item {
+    margin-bottom: 10px;
+}
+
+.reminder-item strong {
+    color: #007bff;
+}
+
+/* RWD 調整 */
+@media (max-width: 600px) {
+    .features {
+        flex-direction: column;
+        align-items: center;
+    }
+    .feature {
+        width: 90%;
+        max-width: 300px;
+    }
+}
+
+/* 在儀表板上顯示0與100標記，以便使用者知道範圍 */
+.gauge-labels {
+    position: absolute;
+    width: 100%;
+    top: 100px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #333;
+    padding: 0 10px;
+}
+</style>
+
+<div class="dashboard-container">
+    <div class="gauge-container">
+        <svg viewBox="0 0 100 50" width="100%" height="100%">
+            <defs>
+                <linearGradient id="gradColor" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="red"/>
+                    <stop offset="50%" stop-color="yellow"/>
+                    <stop offset="100%" stop-color="green"/>
+                </linearGradient>
+            </defs>
+            <!-- 背景半圓 -->
+            <path d="M 10,50 A 40,40 0 0 1 90,50" class="gauge-bg" />
+            <!-- 彩色弧線 -->
+            <path d="M 10,50 A 40,40 0 0 1 90,50" class="gauge-arc" />
+            <!-- 指針：0-100對應-90度到90度 -->
+            <line x1="50" y1="50" x2="50" y2="15" class="gauge-needle"
+                  style="transform-origin:50% 100%; transform: rotate({{ (((avg_strength * 180 / 100) - 90)|int) }}deg);">
+            </line>
+            <circle cx="50" cy="50" r="2.5" class="gauge-center-dot"></circle>
+        </svg>
+        <!-- 加上0與100的標記 -->
+        <!-- <div class="gauge-labels">
+            <span>0</span>
+            <span>100</span>
+        </div> -->
     </div>
-    <div class="feature">
-        <h3>Password Strength Checker</h3>
-        <p>Evaluate your password's strength and improve security.</p>
+    <div class="gauge-value">
+        平均密碼強度：{{ avg_strength|round(2) }}
     </div>
-    <div class="feature">
-        <h3>Password Generator</h3>
-        <p>Create strong and secure passwords effortlessly.</p>
+    <div class="password-count">
+        您目前共有 {{ total_entries }} 筆密碼
     </div>
-    <div class="feature">
-        <h3>Password Encryptor</h3>
-        <p>Encrypt your sensitive data for maximum safety.</p>
+
+    <div class="features">
+        <a href="{{ url_for('password_manager.view_passwords') }}" class="feature">
+            <div class="feature-title">前往我的密碼</div>
+            <div class="feature-desc">管理您的密碼條目，新增、編輯、刪除輕鬆搞定</div>
+        </a>
+
+        <a href="{{ url_for('password_strength_checker.checker') }}" class="feature">
+            <div class="feature-title">密碼強度測試</div>
+            <div class="feature-desc">立即檢測密碼強度，獲取安全建議</div>
+        </a>
+
+        <a href="{{ url_for('password_generator.generator') }}" class="feature">
+            <div class="feature-title">密碼生成器</div>
+            <div class="feature-desc">快速產生強密碼，提高帳號安全性</div>
+        </a>
+
+        <a href="{{ url_for('password_encryptor.encryptor') }}" class="feature">
+            <div class="feature-title">密碼加密器</div>
+            <div class="feature-desc">利用提示詞產生記憶性高的加密密碼</div>
+        </a>
     </div>
+
+    {% if weak_passwords and weak_passwords|length > 0 %}
+    <div class="reminder-section">
+        <h3>提醒您更改以下密碼：</h3>
+        <p>請考慮前往我的密碼更新以提高安全性</p>
+        {% for entry in weak_passwords %}
+        <div class="reminder-item">
+            <strong>{{ entry.site_name }}</strong>（用戶名：{{ entry.site_username }}）強度：{{ entry.strength_score }}<br>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

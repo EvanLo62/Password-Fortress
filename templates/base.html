@@ -26,6 +26,29 @@
             height: 46px; /* 固定高度 */
         }
 
+        /* 確保 form 樣式固定 */
+        .user-info form {
+            margin: 0; /* 移除可能的外邊距 */
+            padding: 0; /* 移除內邊距 */
+            display: inline; /* 確保 form 僅包覆按鈕 */
+        }
+
+        /* 按鈕樣式 */
+        .logout-btn {   
+            background-color: #ff6347;
+            color: white; 
+            padding: 10px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+            font-size: 14px; /* 確保字體大小一致 */
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #e5533d;
+        }
+
         .logo img {
             height: 40px;
             cursor: pointer;
@@ -34,7 +57,8 @@
 
         .nav {
             display: flex;
-            gap: 10px;
+            align-items: center; /* 讓文字垂直置中 */
+            gap: 0px;
         }
 
         .nav a {
@@ -111,10 +135,11 @@
     {% if current_user.is_authenticated %}
     <div class="header">
         <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onclick="scrollToTop()">
+            <a href="{{ url_for('dashboard.dashboard') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+            </a>
         </div>
         <nav class="nav">
-            <a href="/dashboard">儀表板</a>
             <a href="/password-manager/view">我的密碼</a>
             <a href="/password-strength-checker">密碼強度檢測</a>
             <a href="/password-generator">密碼生成器</a>
@@ -123,7 +148,7 @@
         <div class="user-info">
             <span>歡迎, {{ current_user.username }}</span>
             <form action="/logout" method="POST" onsubmit="confirmLogout(event)">
-                <button type="submit" style="background-color: #ff6347; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
+                <button type="submit" class="logout-btn" >
                     登出
                 </button>
             </form>
