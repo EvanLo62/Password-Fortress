@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}信箱兩步驟驗證{% endblock %}
+
+{% block content %}
+<style>
+  /* 表單樣式 */
+  body {
+    background-color: #fff8dc; /* 淺黃色背景 */
+    font-family: Arial, sans-serif;
+  }
+
+  form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fffacd; /* 淺黃色表單背景 */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #f0ad4e; /* 聚焦時邊框顏色 */
+    box-shadow: 0 0 5px rgba(240, 173, 78, 0.5);
+  }
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #f0ad4e; /* 黃橙色按鈕 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background: #ec971f;
+  }
+
+  .send-code-btn {
+    margin-bottom: 15px;
+    background: #5bc0de; /* 藍色按鈕 */
+    color: white;
+  }
+
+  .send-code-btn:hover {
+    background: #31b0d5;
+  }
+
+  .message-error {
+    color: red;
+    text-align: center;
+  }
+
+  .message-success {
+    color: green;
+    text-align: center;
+  }
+</style>
+
+<h2 style="text-align: center; color: #f0ad4e;">信箱兩步驟驗證</h2>
+
+<form action="{{ url_for('password_manager.verify_2fa_page') }}" method="POST">
+
+    <!-- Flash 訊息區 -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="message-{{ 'error' if category == 'error' else 'success' }}">
+                {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+  <button type="button" class="send-code-btn" onclick="sendCode()">發送驗證碼</button>
+  <label for="code">輸入驗證碼:</label>
+  <input type="text" name="code" placeholder="請輸入您的驗證碼" required>
+  <button type="submit">提交驗證碼</button>
+</form>
+
+
+<script>
+  function sendCode() {
+    fetch("{{ url_for('password_manager.send_2fa_code') }}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        alert(data.message);
+      } else {
+        alert("錯誤：" + data.message);
+      }
+    })
+    .catch(error => {
+      alert("發送過程中出現錯誤: " + error);
+    });
+  }
+</script>
+
+{% endblock %}
