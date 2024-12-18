@@ -4,26 +4,32 @@
 {% block content %}
 <h2>密碼生成器</h2>
 <form method="POST">
-    <label>密碼長度:</label><br>
-    <input type="number" name="length" value="12" min="6" max="64"><br><br>
-    <input type="checkbox" name="digits" checked> 數字<br>
-    <input type="checkbox" name="special" checked> 特殊字元<br>
-    <input type="checkbox" name="upper" checked> 大寫字母<br>
-    <input type="checkbox" name="lower" checked> 小寫字母<br><br>
-    <button type="submit">生成</button>
+    <label>密碼長度 (8~16):</label>
+    <input type="number" name="length" min="8" max="16" value="12" required><br><br>
+
+    <label>生成密碼數量:</label>
+    <input type="number" name="count" min="1" value="1" required><br><br>
+
+    <button type="submit">生成密碼</button>
 </form>
 
-{% if generated_password %}
-    <p>生成的密碼：<strong>{{ generated_password }}</strong></p>
-    <hr>
-    <h3>儲存至我的密碼</h3>
-    <form action="{{ url_for('password_generator.save_generated') }}" method="POST">
-        <input type="hidden" name="generated_password" value="{{ generated_password }}">
-        <label>網站名稱:</label><br>
-        <input type="text" name="site_name" required><br><br>
-        <label>網站用戶名:</label><br>
-        <input type="text" name="site_username" required><br><br>
-        <button type="submit">儲存</button>
-    </form>
+{% if passwords %}
+<h3>生成的密碼:</h3>
+<ul>
+    {% for pwd, score, strength in passwords %}
+    <li>
+        <strong>{{ pwd }}</strong> -- 分數: {{ score }} ({{ strength }})
+        <!-- 儲存按鈕 -->
+        <form method="POST" action="{{ url_for('password_generator.save_generated') }}" style="display: inline;">
+            <input type="hidden" name="generated_password" value="{{ pwd }}">
+            <label>網站名稱:</label>
+            <input type="text" name="site_name" required>
+            <label>帳號名稱:</label>
+            <input type="text" name="site_username" required>
+            <button type="submit" style="margin-left: 10px;">儲存</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
 {% endif %}
 {% endblock %}
