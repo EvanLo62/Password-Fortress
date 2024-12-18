@@ -70,7 +70,7 @@ def edit_password(entry_id):
         entry.site_name = request.form['site_name']
         entry.site_username = request.form['site_username']
         new_password = request.form['site_password']
-        entry.site_password = PasswordEntry.set_encrypted_password(new_password, method='pbkdf2:sha256')
+        entry.site_password = PasswordEntry.set_encrypted_password(new_password)
         entry.strength_score = calculate_strength(new_password)
         db.session.commit()
         flash('密碼已成功更新！', 'success')

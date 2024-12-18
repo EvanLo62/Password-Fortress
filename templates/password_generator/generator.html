@@ -2,34 +2,229 @@
 {% block title %}密碼生成器{% endblock %}
 
 {% block content %}
-<h2>密碼生成器</h2>
-<form method="POST">
-    <label>密碼長度 (8~16):</label>
-    <input type="number" name="length" min="8" max="16" value="12" required><br><br>
+<style>
+    body {
+        background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+        background-size: cover;         /* 使背景圖片覆蓋整個視窗 */
+        background-repeat: no-repeat;   /* 防止圖片重複 */
+        background-attachment: fixed;   /* 使背景圖片固定在視窗，不隨滾動而移動 */
+        background-position: center;    /* 背景圖片居中顯示 */
+        color: #e0e0e0;                  /* 設置文本顏色，避免和背景衝突 */
+        /* background: linear-gradient(to bottom right, #f0f2f5, #e6e9ed); */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-    <label>生成密碼數量:</label>
-    <input type="number" name="count" min="1" value="1" required><br><br>
+    /* 容器樣式 */
+    .generator-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 60px; /* 增加左右區塊的間隔 */
+        margin: 40px auto;
+        max-width: 1000px;
+    }
 
-    <button type="submit">生成密碼</button>
-</form>
+    /* 左側控制區域 */
+    .controls {
+        flex: 1;
+        background-color: #2b2e3b;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 350px;
+        flex-shrink: 0;         /* 避免左側區塊縮小 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;    /* 讓內容置中對齊 */
+    }
 
-{% if passwords %}
-<h3>生成的密碼:</h3>
-<ul>
-    {% for pwd, score, strength in passwords %}
-    <li>
-        <strong>{{ pwd }}</strong> -- 分數: {{ score }} ({{ strength }})
-        <!-- 儲存按鈕 -->
-        <form method="POST" action="{{ url_for('password_generator.save_generated') }}" style="display: inline;">
-            <input type="hidden" name="generated_password" value="{{ pwd }}">
-            <label>網站名稱:</label>
-            <input type="text" name="site_name" required>
-            <label>帳號名稱:</label>
-            <input type="text" name="site_username" required>
-            <button type="submit" style="margin-left: 10px;">儲存</button>
+    .controls h2 {
+        color: #4dadf7;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .controls form {
+        width: 100%;            /* 讓表單佔滿整個區塊 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;    /* 表單內的元素置中對齊 */
+    }
+
+    .controls label {
+        width: 100%;            /* 讓標籤佔滿整個寬度 */
+        text-align: left;       /* 保持標籤文字左對齊 */
+        margin-bottom: 10px;
+        color: #ccc;
+    }
+
+    .controls input {
+        width: 100%;            /* 讓輸入框佔滿整個寬度 */
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #444;
+        background-color: #39394d;
+        color: #fff;
+        border-radius: 5px;
+    }
+
+    .controls button {
+        width: 110%;            /* 讓按鈕寬度與輸入框保持一致 */
+        padding: 12px;
+        margin-top: 10px;
+        background-color: #4dadf7;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        box-sizing: border-box;
+    }
+
+    .controls button:hover {
+        background-color: #3a8edc;
+    }
+
+    /* 右側顯示密碼區域 */
+    .password-results {
+        flex: 2;
+        background-color: #2b2e3b;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 600px;
+        overflow-y: auto;
+    }
+
+    .password-results h3 {
+        color: #4dadf7;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .password-item {
+        background-color: #39394d;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 25px; /* 增加間隔 */
+        color: #fff;
+    }
+
+    .password-item strong {
+        display: block;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: #f1c40f;
+    }
+
+    .password-item form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .password-item input[type="text"] {
+        padding: 8px;
+        background-color: #2b2e3b;
+        border: 1px solid #444;
+        color: #fff;
+        border-radius: 5px;
+    }
+
+    .password-item button {
+        align-self: flex-start;
+        padding: 10px;
+        background-color: #4dadf7;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .password-item button:hover {
+        background-color: #3a8edc;
+    }
+
+        /* 調整成功訊息樣式，不換行顯示 */
+    .success-message {
+        background-color: #2ecc71;
+        color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        text-align: center;
+        white-space: nowrap; /* 防止換行 */
+    }
+
+    
+
+    @media (max-width: 768px) {
+        .generator-container {
+            flex-direction: column;
+        }
+
+        .controls,
+        .password-results {
+            max-width: 100%;
+        }
+    }
+</style>
+
+
+<div class="generator-container">
+    <!-- 左側控制區域 -->
+    <div class="controls">
+        <h2>密碼生成器</h2>
+        <form method="POST">
+            <label for="length">密碼長度 (8~16):</label>
+            <input type="number" name="length" id="length" min="8" max="16" value="12" required>
+
+            <label for="count">生成密碼數量:</label>
+            <input type="number" name="count" id="count" min="1" value="1" required>
+
+            <button type="submit">生成密碼</button>
         </form>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
+    </div>
+
+    <!-- 右側顯示密碼區域 -->
+    <div class="password-results">
+        <h3>生成的密碼</h3>
+    
+        {% set saved_password = session.get('saved_password') %}
+        {% if saved_password %}
+            <div class="success-message">
+                成功將密碼「<strong>{{ saved_password.password }}</strong>」儲存到「{{ saved_password.site_name }}」的帳號「{{ saved_password.site_username }}」
+                {% do session.pop('saved_password') %}
+            </div>
+        {% endif %}
+    
+        {% if passwords %}
+            {% for pwd, score, strength in passwords %}
+                <div class="password-item">
+                    <strong>{{ pwd }}</strong>
+                    <span>分數: {{ score }} ({{ strength }})</span>
+    
+                    <!-- 儲存表單 -->
+                    <form method="POST" action="{{ url_for('password_generator.save_generated') }}">
+                        <input type="hidden" name="generated_password" value="{{ pwd }}">
+                        <input type="text" name="site_name" placeholder="網站名稱" required>
+                        <input type="text" name="site_username" placeholder="帳號名稱" required>
+                        <button type="submit">儲存</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% endif %}
+    
+        {% if not passwords and not saved_password %}
+            <!-- 只有在沒有生成密碼且沒有成功儲存訊息時才顯示 -->
+            <p style="color: #ccc; text-align: center;">尚未生成密碼</p>
+        {% endif %}
+
+    </div>    
+</div>
 {% endblock %}

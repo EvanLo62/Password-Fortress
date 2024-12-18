@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from models import db, PasswordEntry
 from werkzeug.security import generate_password_hash
 from utils.password_strength_checker import pwdRating
+from flask import session
 
 generator_bp = Blueprint('password_generator', __name__, url_prefix='/password-generator')
 
@@ -71,7 +72,7 @@ def save_generated():
     site_username = request.form['site_username']
     gen_password = request.form['generated_password']
 
-    hashed_pw = generate_password_hash(gen_password, method='pbkdf2:sha256')
+    hashed_pw = PasswordEntry.set_encrypted_password(gen_password)
     score, _, _, _, _ = pwdRating(gen_password)
     new_entry = PasswordEntry(
         user_id=current_user.id,
@@ -83,5 +84,13 @@ def save_generated():
     db.session.add(new_entry)
     db.session.commit()
 
+    # 儲存成功的訊息到 session
+    session['saved_password'] = {
+        'password': gen_password,
+        'site_name': site_name,
+        'site_username': site_username
+    }
+    
     flash('密碼已成功儲存！', 'success')
+
     return redirect(url_for('password_generator.generator'))
