@@ -67,7 +67,7 @@ def save_encrypted():
     encrypted_password = request.form['encrypted_password']
 
     # 加密密碼並存儲
-    hashed_pw = generate_password_hash(encrypted_password, method='pbkdf2:sha256')
+    hashed_pw = PasswordEntry.set_encrypted_password(encrypted_password)
     score, _, _, _, _ = pwdRating(encrypted_password)
     new_entry = PasswordEntry(
         user_id=current_user.id,

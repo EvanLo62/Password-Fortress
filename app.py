@@ -13,6 +13,7 @@ import os
 from datetime import timedelta
 
 app = Flask(__name__)
+app.jinja_env.add_extension('jinja2.ext.do')  # 啟用 do 擴展
 
 # 載入環境變數
 load_dotenv()
