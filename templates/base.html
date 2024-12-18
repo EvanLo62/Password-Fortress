@@ -26,6 +26,29 @@
             height: 46px; /* 固定高度 */
         }
 
+        /* 確保 form 樣式固定 */
+        .user-info form {
+            margin: 0; /* 移除可能的外邊距 */
+            padding: 0; /* 移除內邊距 */
+            display: inline; /* 確保 form 僅包覆按鈕 */
+        }
+
+        /* 按鈕樣式 */
+        .logout-btn {   
+            background-color: #ff6347;
+            color: white; 
+            padding: 10px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+            font-size: 14px; /* 確保字體大小一致 */
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #e5533d;
+        }
+
         .logo img {
             height: 40px;
             cursor: pointer;
@@ -123,7 +146,7 @@
         <div class="user-info">
             <span>歡迎, {{ current_user.username }}</span>
             <form action="/logout" method="POST" onsubmit="confirmLogout(event)">
-                <button type="submit" style="background-color: #ff6347; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
+                <button type="submit" class="logout-btn" >
                     登出
                 </button>
             </form>
