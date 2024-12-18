@@ -62,7 +62,7 @@ def add_password():
     return render_template('password_manager/add_password.html')
 
 
-@password_manager_bp.route('/view')
+@password_manager_bp.route('/')
 @login_required
 def view_passwords():
     entries = PasswordEntry.query.filter_by(user_id=current_user.id).all()
