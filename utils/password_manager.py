@@ -1,13 +1,14 @@
 # password_manager.py
 
+from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from models import db, PasswordEntry
 from flask import session
+from flask_mail import Message
+
 
 password_manager_bp = Blueprint('password_manager', __name__, url_prefix='/password-manager')
-
-# password_manager.py (僅示範需要修改/新增部分的邏輯)
 
 @password_manager_bp.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -90,20 +91,58 @@ def delete_password(entry_id):
     flash('密碼已刪除。', 'success')
     return redirect(url_for('password_manager.view_passwords'))
 
-# @password_manager_bp.route('/2fa', methods=['GET', 'POST'])
-# @login_required
-# def two_factor_auth():
-#     if request.method == 'POST':
-#         # 簡單模擬雙因子驗證，實際應集成 OTP (如 Google Authenticator)
-#         otp_code = request.form.get('otp_code')
-#         if otp_code == '123456':  # 示例：預設驗證碼
-#             session['2fa_verified'] = True
-#             flash('雙因子驗證成功！', 'success')
-#             return redirect(url_for('password_manager.view_passwords'))
-#         else:
-#             flash('驗證失敗，請再試一次。', 'error')
+@password_manager_bp.route('/verify-2fa-page', methods=['GET', 'POST'])
+@login_required
+def verify_2fa_page():
+    if request.method == 'POST':
+        code = request.form.get('code')
+        stored_code = session.get('2fa_code')
+        expiry_time = session.get('2fa_code_expiry')
 
-#     return render_template('password_manager/2fa.html')
+        # 驗證碼過期或不存在
+        if not stored_code or datetime.now() > datetime.fromisoformat(expiry_time):
+            flash('驗證碼已過期，請重新發送。', 'error')
+            return redirect(url_for('password_manager.verify_2fa_page'))
+
+        # 驗證碼正確
+        if code == stored_code:
+            session.permanent = True  # 讓 session 遵循自動過期時間設置
+            session['is_2fa_verified'] = True  # 設定二因子驗證狀態
+            flash('二因子驗證成功！', 'success')
+            return redirect(url_for('password_manager.view_passwords'))
+
+        # 驗證碼錯誤
+        flash('驗證碼不正確！', 'error')
+
+    return render_template('verify_2fa_page.html')
+
+
+@password_manager_bp.route('/send-2fa-code', methods=['POST'])
+@login_required
+def send_2fa_code():
+    from app import MAIL_USERNAME, mail
+    import random
+    import string
+    from datetime import datetime, timedelta
+
+    # 生成隨機6位驗證碼
+    code = ''.join(random.choices(string.digits, k=6))
+    session['2fa_code'] = code
+    session['2fa_code_expiry'] = (datetime.now() + timedelta(minutes=5)).isoformat()  # 設置有效期限
+
+    # 發送郵件
+    msg = Message(
+        subject="Password Fortress兩步驟驗證",
+        sender=MAIL_USERNAME,  # 發送信箱
+        recipients=[current_user.email]  # 用戶的信箱
+    )
+    msg.body = f"您的信箱驗證碼：{code}\n\n此驗證碼有效期限為 5 分鐘。"
+    try:
+        mail.send(msg)
+        return {'status': 'success', 'message': '驗證碼已發送至您的信箱。'}, 200
+    except Exception as e:
+        return {'status': 'failure', 'message': f'郵件發送失敗：{e}'}, 500
+
 
 def calculate_strength(password):
     # 簡單的密碼強度計算範例，可自行強化
