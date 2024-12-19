@@ -1,125 +1,165 @@
 {% extends "base.html" %}
-{% block title %}信箱兩步驟驗證{% endblock %}
+{% block title %}兩步驟驗證{% endblock %}
 
 {% block content %}
 <style>
-  /* 表單樣式 */
-  body {
-    background-color: #fff8dc; /* 淺黃色背景 */
-    font-family: Arial, sans-serif;
-  }
+    body {
+        background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+        color: #e0e0e0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-  form {
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #fffacd; /* 淺黃色表單背景 */
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
+    .verify-2fa-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 40px auto;
+        max-width: 600px;
+    }
 
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #333;
-  }
+    .form-wrapper {
+        background-color: rgba(30, 30, 30, 0.9);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 500px;
+    }
 
-  input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
+    .form-wrapper h2 {
+        color: #f0ad4e;
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-  input:focus {
-    outline: none;
-    border-color: #f0ad4e; /* 聚焦時邊框顏色 */
-    box-shadow: 0 0 5px rgba(240, 173, 78, 0.5);
-  }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
 
-  button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background: #f0ad4e; /* 黃橙色按鈕 */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
+    .form-group label {
+        color: #ccc;
+        margin-bottom: 10px;
+        display: block;
+    }
 
-  button:hover {
-    background: #ec971f;
-  }
+    .form-group input {
+        padding: 10px;
+        border: 1px solid #444;
+        background-color: #39394d;
+        color: #fff;
+        border-radius: 5px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 
-  .send-code-btn {
-    margin-bottom: 15px;
-    background: #5bc0de; /* 藍色按鈕 */
-    color: white;
-  }
+    .form-wrapper button {
+        width: 100%;
+        padding: 12px;
+        background-color: #f0ad4e;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
 
-  .send-code-btn:hover {
-    background: #31b0d5;
-  }
+    .form-wrapper button:hover {
+        background-color: #ec971f;
+    }
 
-  .message-error {
-    color: red;
-    text-align: center;
-  }
+    .send-code-btn {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        background-color: hsl(194, 66%, 61%);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 12px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
 
-  .message-success {
-    color: green;
-    text-align: center;
-  }
+    .send-code-btn:hover {
+        background-color: #8d5405;
+    }
+
+    .send-code-btn:disabled {
+        background-color: #8d5405;
+        cursor: not-allowed;
+    }
+
+    .message-error {
+        color: red;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .message-success {
+        color: green;
+        text-align: center;
+        margin-top: 10px;
+    }
 </style>
 
-<h2 style="text-align: center; color: #f0ad4e;">信箱兩步驟驗證</h2>
+<div class="verify-2fa-container">
+    <div class="form-wrapper">
+        <h2>信箱兩步驟驗證</h2>
 
-<form action="{{ url_for('password_manager.verify_2fa_page') }}" method="POST">
+        <form action="{{ url_for('password_manager.verify_2fa_page') }}" method="POST">
+            <button type="button" id="send-code-btn" class="send-code-btn" onclick="sendCode()">發送驗證碼</button>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="message-{{ 'error' if category == 'error' else 'success' }}">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-    <!-- Flash 訊息區 -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <p class="message-{{ 'error' if category == 'error' else 'success' }}">
-                {{ message }}
-                </p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-  <button type="button" class="send-code-btn" onclick="sendCode()">發送驗證碼</button>
-  <label for="code">輸入驗證碼:</label>
-  <input type="text" name="code" placeholder="請輸入您的驗證碼" required>
-  <button type="submit">提交驗證碼</button>
-</form>
-
+            <div class="form-group">
+                <label for="code">輸入驗證碼:</label>
+                <input type="text" name="code" placeholder="請輸入您的驗證碼" required>
+            </div>
+            
+            <button type="submit">驗證</button>
+        </form>
+    </div>
+</div>
 
 <script>
-  function sendCode() {
-    fetch("{{ url_for('password_manager.send_2fa_code') }}", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === 'success') {
-        alert(data.message);
-      } else {
-        alert("錯誤：" + data.message);
-      }
-    })
-    .catch(error => {
-      alert("發送過程中出現錯誤: " + error);
-    });
-  }
+    function sendCode() {
+        const button = document.getElementById('send-code-btn');
+        button.disabled = true;
+        fetch("{{ url_for('password_manager.send_2fa_code') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+            } else {
+                alert("錯誤：" + data.message);
+            }
+            button.disabled = false;
+        })
+        .catch(error => {
+            alert("發送過程中出現錯誤: " + error);
+            button.disabled = false;
+        });
+    }
 </script>
-
 {% endblock %}
