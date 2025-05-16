@@ -2,6 +2,8 @@
 
 網站：[Password Fortress](https://password-fortress.onrender.com)
 
+備註：若是第一次部署或更新後，需等待 Render 完成部署程序後才會正常顯示網站
+
 ## 功能介紹
 - **密碼強度檢測**：即時分析並顯示密碼強度
 - **密碼加密儲存**：採用 bcrypt 雜湊演算法保護使用者密碼
