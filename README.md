@@ -15,7 +15,7 @@
 ## 使用技術
 - **後端**：Python 3.x、Flask
 - **資料庫**：SQLite
-- **前端**：HTML5、CSS3、JavaScript、Bootstrap
+- **前端**：HTML、CSS、JavaScript、Bootstrap
 - **加密**：bcrypt
 - **部署**：Render.com
 
