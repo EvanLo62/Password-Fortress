@@ -1,2 +1,23 @@
-# 密碼管理網站應用 <br>
-網站: [https://password-fortress.onrender.com](https://password-fortress.onrender.com)
+# 密碼管理網站應用
+
+網站：[Password Fortress](https://password-fortress.onrender.com)
+
+## 功能介紹
+- **密碼強度檢測**：即時分析並顯示密碼強度
+- **密碼加密儲存**：採用 bcrypt 雜湊演算法保護使用者密碼
+- **密碼自動生成**：根據使用者設定（長度、生成數量）隨機生成強度高的安全密碼
+- **CRUD 操作**：支援新增、檢視、編輯與刪除密碼條目
+- **密碼存儲管理**：依網站名稱、使用者名稱來儲存密碼
+- **使用者認證**：提供註冊、登入與忘記密碼功能、並須經過兩步驟驗證才可對儲存的密碼進行更動
+
+## 使用技術
+- **後端**：Python 3.x、Flask
+- **資料庫**：SQLite
+- **前端**：HTML5、CSS3、JavaScript、Bootstrap
+- **加密**：bcrypt
+- **部署**：Render.com
+
+## 開發人員
+- EvanLo62
+- LCY000
+- gino287
